@@ -25,7 +25,7 @@ testChangeHeaders('False positive image', [
 testChangeHeaders('Normal PDF', [
     ['Content-Type', 'Application/PDF'],
 ], [
-    ['Content-Type', 'Application/PDF'],
+    ['Content-Type', 'application/pdf'],
     ['Content-Disposition', 'inline'],
 ]);
 
@@ -58,9 +58,28 @@ testChangeHeaders('Attachment and inline (invalid)', [
     ['Content-Disposition', 'inline; filename=test.pdf; inline'],
 ]);
 
-testChangeHeaders('Wrong mime', [
+testChangeHeaders('Charset', [
+    ['Content-Type', 'application/pdf;charset=ISO-8859-1'],
+], [
+    ['Content-Type', 'application/pdf; charset=ISO-8859-1'],
+    ['Content-Disposition', 'inline'],
+]);
+
+testChangeHeaders('x-PDF', [
     ['Content-Type', 'application/x-pdf'],
-], false);
+], [
+    ['Content-Type', 'application/pdf'],
+    ['Content-Disposition', 'inline'],
+]);
+
+testChangeHeaders('Image-PDF', [
+    ['Expires', 'Sat, 27 Jan 2018 22:48:52 GMT'],
+    ['Content-Type', 'image/pdf;charset=ISO-8859-1'],
+], [
+    ['Expires', 'Sat, 27 Jan 2018 22:48:52 GMT'],
+    ['Content-Type', 'application/pdf; charset=ISO-8859-1'],
+    ['Content-Disposition', 'inline'],
+]);
 
 console.log('All tests passed.');
 
