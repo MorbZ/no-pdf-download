@@ -11,7 +11,10 @@
     ],
 
     "background": {
-        "scripts": ["src/background.js"]
+        "scripts": [
+            "src/headers.js",
+            "src/background.js"
+        ]
     },
 
     "icons": {
