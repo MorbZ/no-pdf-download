@@ -10,7 +10,10 @@ chrome.webRequest.onHeadersReceived.addListener(
         }
     },
     {
-        types: ['main_frame'],
+        types: [
+            'main_frame',
+            'sub_frame',
+        ],
         urls: ['<all_urls>'],
     },
     [
