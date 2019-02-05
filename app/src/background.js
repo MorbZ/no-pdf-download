@@ -2,7 +2,7 @@
 
 chrome.webRequest.onHeadersReceived.addListener(
     (details) => {
-        let newHeaders = changeHeaders(details.responseHeaders);
+        let newHeaders = handleHeaders(details.url, details.responseHeaders);
         if(newHeaders !== undefined) {
             return {
                 responseHeaders: newHeaders

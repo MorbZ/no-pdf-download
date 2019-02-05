@@ -4,53 +4,54 @@ let noPdfDownload = require('../app/src/headers.js');
 let assert = require('assert');
 
 /* Tests */
-testChangeHeaders('Empty', [], false);
+testHandleHeaders('Empty', '', [], false);
 
-testChangeHeaders('False positive', [
+testHandleHeaders('False positive', '', [
     ['Server', 'nginx/1.13.7'],
     ['Content-Length', '456'],
     ['Content-Encoding', 'gzip'],
     ['Content-Type', 'text/html; charset=utf-8'],
 ], false);
 
-testChangeHeaders('False positive HTML', [
+testHandleHeaders('False positive HTML', 'http://test.com/test.pdf', [
     ['Content-Disposition', 'attachment'],
     ['Content-Type', 'text/html']
 ], false);
 
-testChangeHeaders('False positive image', [
+testHandleHeaders('False positive image', '', [
+    ['Content-Disposition', 'attachment; filename=test.pdf'],
     ['Content-Type', 'image/jpeg'],
 ], false);
 
-testChangeHeaders('Normal PDF', [
+testHandleHeaders('Normal PDF', '', [
     ['Content-Type', 'Application/PDF'],
 ], [
     ['Content-Type', 'application/pdf'],
     ['Content-Disposition', 'inline'],
 ]);
 
-testChangeHeaders('Inline', [
+testHandleHeaders('Inline', '', [
     ['Content-Type', 'application/pdf'],
     ['Content-Disposition', 'inline'],
 ], false);
 
-testChangeHeaders('Attachment', [
+testHandleHeaders('Attachment', '', [
     ['Content-Type', 'application/pdf'],
-    ['Content-Disposition', 'attachment'],
+    ['Content-Disposition', 'ATTACHMENT'],
 ], [
     ['Content-Type', 'application/pdf'],
     ['Content-Disposition', 'inline'],
 ]);
 
-testChangeHeaders('Attachment with filename', [
+testHandleHeaders('Attachment with filename', 'http://test.com/test.pdf', [
     ['Content-Type', 'application/pdf'],
     ['Content-Disposition', 'attachment;filename=test.pdf'],
 ], [
     ['Content-Type', 'application/pdf'],
-    ['Content-Disposition', 'inline; filename=test.pdf'],
+    ['Content-Disposition', 'inline;filename=test.pdf'],
 ]);
 
-testChangeHeaders('Attachment and inline (invalid)', [
+testHandleHeaders('Attachment and inline (invalid)', '', [
     ['content-type', 'application/pdf'],
     ['Content-Disposition', 'attachment; filename=test.pdf; inline'],
 ], [
@@ -58,34 +59,55 @@ testChangeHeaders('Attachment and inline (invalid)', [
     ['Content-Disposition', 'inline; filename=test.pdf; inline'],
 ]);
 
-testChangeHeaders('Charset', [
+testHandleHeaders('Charset', '', [
     ['Content-Type', 'application/pdf;charset=ISO-8859-1'],
 ], [
-    ['Content-Type', 'application/pdf; charset=ISO-8859-1'],
+    ['Content-Type', 'application/pdf;charset=ISO-8859-1'],
     ['Content-Disposition', 'inline'],
 ]);
 
-testChangeHeaders('x-PDF', [
+testHandleHeaders('x-PDF', '', [
     ['Content-Type', 'application/x-pdf'],
 ], [
     ['Content-Type', 'application/pdf'],
     ['Content-Disposition', 'inline'],
 ]);
 
-testChangeHeaders('Image-PDF', [
+testHandleHeaders('Image-PDF', '', [
     ['Expires', 'Sat, 27 Jan 2018 22:48:52 GMT'],
     ['Content-Type', 'image/pdf;charset=ISO-8859-1'],
 ], [
     ['Expires', 'Sat, 27 Jan 2018 22:48:52 GMT'],
-    ['Content-Type', 'application/pdf; charset=ISO-8859-1'],
+    ['Content-Type', 'application/pdf;charset=ISO-8859-1'],
+    ['Content-Disposition', 'inline'],
+]);
+
+testHandleHeaders('Octet-stream with PDF file name and invalid', '', [
+    ['Content-Type', 'application/octet-stream'],
+    ['Content-Disposition', 'attachment;filename="te;t.pdf";filename=img.jpg'],
+], [
+    ['Content-Type', 'application/pdf'],
+    ['Content-Disposition', 'inline;filename="te;t.pdf";filename=img.jpg'],
+]);
+
+testHandleHeaders('Octet-stream with image', 'http://test.com/test.pdf', [
+    ['Content-Type', 'application/octet-stream'],
+    ['Content-Disposition', 'attachment;filename=image.jpg'],
+], false);
+
+testHandleHeaders('Octet-stream with PDF in URL', 'http://test.com/test.PDF?1', [
+    ['Content-Type', 'application/OCTET-stream '],
+], [
+    ['Content-Type', 'application/pdf'],
     ['Content-Disposition', 'inline'],
 ]);
 
 console.log('All tests passed.');
 
 /* Helper Functions */
-// Tests header arrays. If expectedHeaders is set to false headers must not change.
-function testChangeHeaders(name, headers, expectedHeaders) {
+// Tests header arrays. If expectedHeaders is set to false headers must not
+// change.
+function testHandleHeaders(name, url, headers, expectedHeaders) {
     console.log('Testing: ', name);
 
     // Prepare expected headers
@@ -96,7 +118,7 @@ function testChangeHeaders(name, headers, expectedHeaders) {
 
     // Get new headers
     headers = makeHeaderArray(headers);
-    let newHeaders = noPdfDownload.changeHeaders(headers);
+    let newHeaders = noPdfDownload.handleHeaders(url, headers);
     if(newHeaders === undefined) {
         newHeaders = headers;
     }
