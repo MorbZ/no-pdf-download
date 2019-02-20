@@ -1,6 +1,6 @@
 'use strict';
 
-let noPdfDownload = require('../app/src/headers.js');
+let noPdfDownload = require('../../app/src/headers.js');
 let assert = require('assert');
 
 describe('Handle Headers', () => {
