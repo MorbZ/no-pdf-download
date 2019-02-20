@@ -1,4 +1,4 @@
-Run test:
-
-    $ npm install -g assert
-    $ node test.js
+To run the tests:  
+`cd` into this directory  
+`$ npm install`  
+`$ npm test`
