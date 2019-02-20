@@ -1,6 +1,6 @@
 'use strict';
 
-// For Chrome we have to use "extraHeaders" to get the cookie header
+// For Chrome we have to use "extraHeaders" to get all headers
 let extraInfoSpec = [
     'responseHeaders',
     'blocking',
