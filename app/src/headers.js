@@ -12,6 +12,10 @@ const PDF_MIME_TYPES = [
     'application/acrobat',
     'applications/vnd.pdf',
 ];
+const BINARY_MIME_TYPES = [
+    'application/octet-stream',
+    'binary/octet-stream',
+];
 const HEADER_CONTENT_DISPOSITION = 'Content-Disposition';
 const HEADER_CONTENT_TYPE = 'Content-Type';
 
@@ -38,7 +42,7 @@ function isPdf(url, type, disposition) {
     }
 
     // Octet-streams may be PDFs, we have to check the extension
-    if(mimeType != 'application/octet-stream') {
+    if(!BINARY_MIME_TYPES.includes(mimeType)) {
         return false;
     }
 

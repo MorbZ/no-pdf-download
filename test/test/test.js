@@ -101,6 +101,14 @@ describe('Handle Headers', () => {
         ['Content-Type', 'application/pdf'],
         ['Content-Disposition', 'inline'],
     ]);
+
+    testHandleHeaders('Binary/Octet-stream with PDF file name(s)', 'http://test.com/02000', [
+        ['Content-Disposition', 'attachment; filename="ABC_2019.pdf"; filename*=UTF-8\'\'ABC_2019.pdf'],
+        ['Content-Type', 'binary/octet-stream'],
+    ], [
+        ['Content-Disposition', 'inline; filename="ABC_2019.pdf"; filename*=UTF-8\'\'ABC_2019.pdf'],
+        ['Content-Type', 'application/pdf'],
+    ]);
 });
 
 /* Helper Functions */
