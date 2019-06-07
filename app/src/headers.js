@@ -14,6 +14,7 @@ const PDF_MIME_TYPES = [
 ];
 const BINARY_MIME_TYPES = [
     'application/octet-stream',
+    'application/force-download',
     'binary/octet-stream',
 ];
 const HEADER_CONTENT_DISPOSITION = 'Content-Disposition';
